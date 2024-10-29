@@ -87,4 +87,19 @@ maclaurin :: Expr   -- ^ expression to approximate (with `x` free)
           -> Double -- ^ value to give to `x`
           -> Int    -- ^ number of terms to expand
           -> Double -- ^ the approximate result
-maclaurin = undefined
+maclaurin expr x n = sum results
+  where facts = genFacts n
+        diffs = take n (iterate (`diff` "x") expr)
+        evals = [eval d [("x", 0)] | d <- diffs]
+        indexes = take n [0..]
+        powers = [x^index | index <- indexes]
+        numerators = zipWith (*) evals powers
+        results = zipWith (/) numerators facts
+        --Generates n number of factorials
+        genFacts :: Int -> [Double]
+        genFacts n = take n (scanl (*) 1 [1..])
+
+
+
+
+
